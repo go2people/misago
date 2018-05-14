@@ -1,6 +1,7 @@
 from rest_framework import serializers
 
 from django.urls import reverse
+from django.core.exceptions import ObjectDoesNotExist
 
 from misago.core.serializers import MutableFields
 from misago.core.utils import format_plaintext_for_html
@@ -37,6 +38,7 @@ class CategorySerializer(serializers.ModelSerializer, MutableFields):
     acl = serializers.SerializerMethodField()
 
     url = serializers.SerializerMethodField()
+    subscription = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
@@ -60,6 +62,7 @@ class CategorySerializer(serializers.ModelSerializer, MutableFields):
             'lft',
             'rght',
             'url',
+            'subscription',
         ]
 
     def get_description(self, obj):
@@ -87,6 +90,17 @@ class CategorySerializer(serializers.ModelSerializer, MutableFields):
             return obj.acl
         except AttributeError:
             return {}
+
+    def get_subscription(self, obj):
+        request = self.context.get('request', None)
+        if request:
+            try:
+                subscription = obj.subscription_set.all().get(user=request.user)
+                return False
+            except ObjectDoesNotExist:
+                return None
+
+        return None
 
     @last_activity_detail
     def get_last_poster(self, obj):
@@ -129,8 +143,10 @@ class CategoryWithPosterSerializer(CategorySerializer):
 
     def get_subcategories(self, obj):
         try:
-            return CategoryWithPosterSerializer(obj.subcategories, many=True).data
+            return CategoryWithPosterSerializer(obj.subcategories, many=True,
+                                                context={'request': self.context.get('request', None)}).data
         except AttributeError:
             return []
+
 
 CategoryWithPosterSerializer = CategoryWithPosterSerializer.extend_fields('last_poster')

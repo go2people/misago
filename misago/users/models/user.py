@@ -159,15 +159,15 @@ class User(AbstractBaseUser, PermissionsMixin):
     # When searching users by their names, always use lowercased string
     # and slug field instead that is normalized around DB engines
     # differences in case handling.
-    username = models.CharField(max_length=30)
-    slug = models.CharField(max_length=30, unique=True)
+    username = models.CharField(max_length=255, unique=True)
+    slug = models.CharField(max_length=255, unique=True)
 
     # Misago stores user email in two fields:
     # "email" holds normalized email address
     # "email_hash" is lowercase hash of email address used to identify account
     # as well as enforcing on database level that no more than one user can be
     # using one email address
-    email = models.EmailField(max_length=255, db_index=True)
+    email = models.EmailField(max_length=255, db_index=True, unique=True)
     email_hash = models.CharField(max_length=32, unique=True)
 
     joined_on = models.DateTimeField(_('joined on'), default=timezone.now)
@@ -238,11 +238,13 @@ class User(AbstractBaseUser, PermissionsMixin):
         'self',
         related_name='followed_by',
         symmetrical=False,
+        blank=True
     )
     blocks = models.ManyToManyField(
         'self',
         related_name='blocked_by',
         symmetrical=False,
+        blank=True
     )
 
     limits_private_thread_invites_to = models.PositiveIntegerField(
@@ -266,10 +268,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     last_posted_on = models.DateTimeField(null=True, blank=True)
 
-    profile_fields = HStoreField(default=dict)
-
-    USERNAME_FIELD = 'slug'
-    REQUIRED_FIELDS = ['email']
+    profile_fields = HStoreField(default=dict, blank=True)
+    USERNAME_FIELD = 'email'
+    # REQUIRED_FIELDS = ['email']
 
     objects = UserManager()
 

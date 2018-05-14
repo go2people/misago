@@ -11,7 +11,7 @@ class MisagoBackend(ModelBackend):
             username = kwargs.get(UserModel.USERNAME_FIELD)
 
         try:
-            user = UserModel.objects.get_by_username_or_email(username)
+            user = UserModel.objects.get_by_email(username)
         except UserModel.DoesNotExist:
             # Run the default password hasher once to reduce the timing
             # difference between an existing and a non-existing user (#20760).

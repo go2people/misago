@@ -14,7 +14,6 @@ export default function(props) {
         <div className="row">
           <Spacer visible={!props.user.id} />
           <Spacer visible={hiddenSpecialOption} />
-          <SubscriptionMenu {...props} />
           <StartPoll {...props} />
           <Reply {...props} />
         </div>

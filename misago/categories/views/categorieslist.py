@@ -9,10 +9,12 @@ def categories(request):
     categories_tree = get_categories_tree(request.user, join_posters=True)
 
     request.frontend_context.update({
-        'CATEGORIES': CategorySerializer(categories_tree, many=True).data,
+        'CATEGORIES': CategorySerializer(categories_tree, many=True, context={'request': request}).data,
         'CATEGORIES_API': reverse('misago:api:category-list'),
     })
-
+    for category in categories_tree:
+        for subcategory in category.subcategories:
+            subcategory.subscription = False
     return render(request, 'misago/categories/list.html', {
         'categories': categories_tree,
     })

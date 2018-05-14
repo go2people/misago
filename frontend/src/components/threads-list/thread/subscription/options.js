@@ -26,7 +26,6 @@ export default class extends React.Component {
   /* jshint ignore:start */
   setSubscription = (newState) => {
     modal.hide();
-
     this.setState({
       isLoading: true
     });
@@ -37,9 +36,8 @@ export default class extends React.Component {
       subscription: STATE_UPDATES[newState]
     }));
 
-    ajax.patch(this.props.thread.api.index, [
-      {op: 'replace', path: 'subscription', value: newState}
-    ]).then(() => {
+    ajax.request("PATCH", this.props.thread.id + '/update/subscription/', {'newState': newState, 'value': newState}
+    ).then(() => {
       this.setState({
         isLoading: false
       });

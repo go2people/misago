@@ -4,23 +4,23 @@ import * as actions from 'misago/reducers/thread';
 import ajax from 'misago/services/ajax';
 import snackbar from 'misago/services/snackbar';
 import store from 'misago/services/store';
+import {Subscription} from "./toolbar-bottom";
 
 export default function(props) {
-  if (!props.user.id) return null;
-
+  console.log('LOAD!')
   return (
-    <div className={props.className}>
+    <div className="btn-group">
       <button
-        aria-expanded="true"
+        aria-expanded="false"
         aria-haspopup="true"
         className="btn btn-default dropdown-toggle btn-block btn-outline"
         data-toggle="dropdown"
         type="button"
       >
         <span className="material-icon">
-          {getIcon(props.thread.subscription)}
+          {getIcon(props.subscription)}
         </span>
-        {getLabel(props.thread.subscription)}
+        {getLabel(props.subscription)}
       </button>
       <Dropdown {...props} />
     </div>
@@ -49,7 +49,7 @@ export function getLabel(subscription) {
 
 export function Dropdown(props) {
   return (
-    <ul className={props.dropdownClassName || "dropdown-menu stick-to-bottom"}>
+    <ul className="dropdown-menu dropdown-menu-right">
       <Disable {...props} />
       <Enable {...props} />
       <Email {...props} />
@@ -59,11 +59,11 @@ export function Dropdown(props) {
 
 export class Disable extends React.Component {
   onClick = () => {
-    if (this.props.thread.subscription === null) {
+    if (this.props.subscription === null) {
       return;
     }
 
-    update(this.props.thread, null, 'unsubscribe');
+    update(this.props, null, 'unsubscribe');
   };
 
   render() {
@@ -82,11 +82,11 @@ export class Disable extends React.Component {
 
 export class Enable extends React.Component {
   onClick = () => {
-    if (this.props.thread.subscription === false) {
+    if (this.props.subscription === false) {
       return;
     }
 
-    update(this.props.thread, false, 'notify');
+    update(this.props, false, 'notify');
   };
 
   render() {
@@ -105,11 +105,11 @@ export class Enable extends React.Component {
 
 export class Email extends React.Component {
   onClick = () => {
-    if (this.props.thread.subscription === true) {
+    if (this.props.subscription === true) {
       return;
     }
 
-    update(this.props.thread, true, 'email');
+    update(this.props, true, 'email');
   };
 
   render() {
@@ -130,22 +130,27 @@ export function update(thread, newState, value) {
   const oldState = {
     subscription: thread.subscription
   };
+  console.log(thread)
+    console.log(newState)
+    console.log(value)
 
   store.dispatch(actions.update({
     subscription: newState
   }));
 
-  ajax.patch(thread.api.index, [
-    {op: 'replace', path: 'subscription', value: value}
-  ]).then((finalState) => {
-    store.dispatch(actions.update(finalState));
+  ajax.request("PATCH", thread.id + '/update/subscription/', {'newState': newState, 'value': value},
+  ).then((finalState) => {
+    console.log(store);
+      console.log(actions);
+      console.log(finalState);
+    // store.dispatch(actions.update(finalState));
   }, (rejection) => {
     if (rejection.status === 400) {
       snackbar.error(rejection.detail[0]);
     } else {
       snackbar.apiError(rejection);
     }
-
+    console.log('oldState');
     store.dispatch(actions.update(oldState));
   });
 }

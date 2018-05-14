@@ -6,6 +6,7 @@ import ReplyButton from './reply-button';
 import SubscriptionSwitch from './subscription';
 
 export default function(props) {
+    console.log(props);
   return (
     <div className="row row-toolbar">
       <div className="col-xs-12 text-center visible-xs-block">
@@ -27,7 +28,6 @@ export default function(props) {
         <div className="row">
           <Spacer {...props} />
           <Moderation {...props} />
-          <Subscription {...props} />
           <Reply
             thread={props.thread}
             onClick={props.openReplyForm}
@@ -61,9 +61,7 @@ export function Moderation(props) {
 
 export function Subscription(props) {
   let xsClass = "col-xs-6";
-  if (!props.thread.acl.can_reply) {
-    xsClass = 'col-xs-12';
-  }
+  console.log(props);
 
   return (
     <div className={xsClass + " col-sm-4"}>

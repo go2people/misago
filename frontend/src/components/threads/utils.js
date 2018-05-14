@@ -133,8 +133,7 @@ export function getModerationActions(threads) {
       moderation.can_merge ||
       moderation.can_move ||
       moderation.can_pin ||
-      moderation.can_pin_globally ||
-      moderation.can_unhide
+      moderation.can_pin_globally
     );
   });
 

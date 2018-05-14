@@ -9,7 +9,7 @@ from .urlpatterns import urlpatterns
 def discover_misago_admin():
     for app in apps.get_app_configs():
         module = import_module(app.name)
-        if not hasattr(module, 'admin'):
+        if not hasattr(module, 'admin') or app.name == 'mezzanine.boot':
             continue
 
         admin_module = import_module('%s.admin' % app.name)

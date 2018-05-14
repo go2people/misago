@@ -9,7 +9,7 @@ class Subscription(models.Model):
         settings.AUTH_USER_MODEL,
         on_delete=models.CASCADE,
     )
-    thread = models.ForeignKey('Thread', on_delete=models.CASCADE)
+    thread = models.ForeignKey('Thread', on_delete=models.CASCADE, null=True, blank=True)
     category = models.ForeignKey(
         'misago_categories.Category',
         on_delete=models.CASCADE,

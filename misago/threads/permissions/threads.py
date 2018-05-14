@@ -663,6 +663,7 @@ can_pin_thread = return_boolean(allow_pin_thread)
 
 
 def allow_unhide_thread(user, target):
+    raise PermissionDenied(_("Unhiding is disbled."))
     if user.is_anonymous:
         raise PermissionDenied(_("You have to sign in to hide threads."))
 
@@ -683,6 +684,7 @@ can_unhide_thread = return_boolean(allow_unhide_thread)
 
 
 def allow_hide_thread(user, target):
+    raise PermissionDenied(_("Hiding is disbled."))
     if user.is_anonymous:
         raise PermissionDenied(_("You have to sign in to hide threads."))
 

@@ -16,14 +16,6 @@ export function Options({ display, disabled, isSelected, thread }) {
   return (
     <div className={className}>
       <div className="row thread-options">
-        <SubscriptionFull
-          thread={thread}
-          disabled={disabled}
-        />
-        <SubscriptionCompact
-          thread={thread}
-          disabled={disabled}
-        />
         <Checkbox
           thread={thread}
           disabled={disabled}
@@ -48,14 +40,6 @@ export function OptionsXs({ display, disabled, isSelected, thread }) {
   return (
     <div className={className}>
       <div className="row thread-options">
-        <SubscriptionFull
-          thread={thread}
-          disabled={disabled}
-        />
-        <SubscriptionCompact
-          thread={thread}
-          disabled={disabled}
-        />
         <Checkbox
           thread={thread}
           disabled={disabled}

@@ -43,14 +43,14 @@ export default class extends React.Component {
 
     return (
       <div className="hidden-xs col-sm-2 col-lg-1">
-        <Link
+        <a
           className="btn btn-default btn-icon btn-aligned btn-go-back btn-block btn-outline"
-          to={parent.url.index + this.props.route.list.path}
+          href="/forum/categories/"
         >
           <span className="material-icon">
             keyboard_arrow_left
           </span>
-        </Link>
+        </a>
       </div>
     );
     /* jshint ignore:end */
@@ -91,7 +91,14 @@ export default class extends React.Component {
             <div className="row">
               <div className={isAuthenticated ? "col-sm-9 col-md-10" : "col-xs-12"}>
                 <div className="row">
-                  {this.getGoBackButton()}
+                  <a
+                    className="col-md-1 btn btn-default btn-icon btn-aligned btn-go-back btn-block btn-outline"
+                    href="/forum/categories/"
+                  >
+                    <span className="material-icon">
+                      keyboard_arrow_left
+                    </span>
+                  </a>
                   <div className={headerClassName}>
                     <ParentCategory
                       categories={this.props.categories}
@@ -108,13 +115,6 @@ export default class extends React.Component {
               )}
             </div>
           </div>
-
-          <Nav
-            baseUrl={this.props.route.category.url.index}
-            list={this.props.route.list}
-            lists={this.props.route.lists}
-          />
-
         </div>
       </div>
     );

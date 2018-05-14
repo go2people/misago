@@ -93,8 +93,8 @@ def validate_username_length(value):
 
 def validate_username(value, exclude=None):
     """shortcut function that does complete validation of username"""
-    validate_username_length(value)
-    validate_username_content(value)
+    # validate_username_length(value)
+    # validate_username_content(value)
     validate_username_available(value, exclude)
     validate_username_banned(value)
 

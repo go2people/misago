@@ -2,6 +2,8 @@
 import React from 'react';
 import Description from './description';
 import Icon from './icon';
+import {Subscription} from "../../../thread/toolbar-bottom";
+import SubscriptionFull from 'misago/components/threads-list/thread/subscription/full';
 
 export default function({ category }) {
   return (
@@ -13,9 +15,13 @@ export default function({ category }) {
         <div className="media-body">
           <h4 className="media-heading">
             <a href={category.url.index}>
-              {category.name}
+                { category.name }
             </a>
           </h4>
+          {/*<Subscription {...category} />*/}
+          <SubscriptionFull
+          thread={category}
+          />
           <Description category={category} />
         </div>
       </div>
