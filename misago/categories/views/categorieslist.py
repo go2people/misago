@@ -1,10 +1,12 @@
 from django.shortcuts import render
 from django.urls import reverse
+from django.contrib.auth.decorators import login_required
 
 from misago.categories.serializers import CategoryWithPosterSerializer as CategorySerializer
 from misago.categories.utils import get_categories_tree
 
 
+@login_required
 def categories(request):
     categories_tree = get_categories_tree(request.user, join_posters=True)
 
