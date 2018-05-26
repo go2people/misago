@@ -95,7 +95,7 @@ class CategorySerializer(serializers.ModelSerializer, MutableFields):
         request = self.context.get('request', None)
         if request:
             try:
-                subscription = obj.subscription_set.all().get(user=request.user)
+                subscription = obj.subscription_set.all().filter(user=request.user).last()
                 return False
             except ObjectDoesNotExist:
                 return None
