@@ -96,8 +96,8 @@ class CategorySerializer(serializers.ModelSerializer, MutableFields):
         if request:
             subscriptions = obj.subscription_set.all().filter(user=request.user)
             subscription = subscriptions.first()
-            subscriptions.exclude(pk=subscription.pk).delete()
             if subscription:
+                subscriptions.exclude(pk=subscription.pk).delete()
                 return False
         return None
 
