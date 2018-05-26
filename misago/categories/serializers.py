@@ -94,14 +94,11 @@ class CategorySerializer(serializers.ModelSerializer, MutableFields):
     def get_subscription(self, obj):
         request = self.context.get('request', None)
         if request:
-            try:
-                subscriptions = obj.subscription_set.all().filter(user=request.user)
-                subscription = subscriptions.first()
-                subscriptions.exclude(pk=subscription.pk).delete()
+            subscriptions = obj.subscription_set.all().filter(user=request.user)
+            subscription = subscriptions.first()
+            subscriptions.exclude(pk=subscription.pk).delete()
+            if subscription:
                 return False
-            except ObjectDoesNotExist:
-                return None
-
         return None
 
     @last_activity_detail
