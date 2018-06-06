@@ -1,13 +1,21 @@
 from django.http import Http404
 from django.shortcuts import render
 from django.urls import reverse
+from django.utils.decorators import method_decorator
 from django.views import View
 
 from misago.core.shortcuts import get_int_or_404
 from misago.threads.viewmodels import (
-    ForumThreads, PrivateThreads, PrivateThreadsCategory, ThreadsCategory, ThreadsRootCategory)
+    ForumThreads, PrivateThreads, PrivateThreadsCategory,
+    ThreadsCategory, ThreadsRootCategory)
+
+from userprofiles.decorators import (active_login_required,
+                                     valid_account_required)
+
+decorators = [active_login_required, valid_account_required]
 
 
+@method_decorator(decorators, name='dispatch')
 class ThreadsList(View):
     category = None
     threads = None
@@ -20,10 +28,12 @@ class ThreadsList(View):
         category = self.get_category(request, **kwargs)
         threads = self.get_threads(request, category, list_type, page)
 
-        frontend_context = self.get_frontend_context(request, category, threads)
+        frontend_context = self.get_frontend_context(
+            request, category, threads)
         request.frontend_context.update(frontend_context)
 
-        template_context = self.get_template_context(request, category, threads)
+        template_context = self.get_template_context(
+            request, category, threads)
         return render(request, self.template_name, template_context)
 
     def get_category(self, request, **kwargs):
@@ -55,6 +65,7 @@ class ThreadsList(View):
         return {}
 
 
+@method_decorator(decorators, name='dispatch')
 class ForumThreadsList(ThreadsList):
     category = ThreadsRootCategory
     threads = ForumThreads
@@ -67,18 +78,21 @@ class ForumThreadsList(ThreadsList):
         }
 
 
+@method_decorator(decorators, name='dispatch')
 class CategoryThreadsList(ForumThreadsList):
     category = ThreadsCategory
 
     template_name = 'misago/threadslist/category.html'
 
     def get_category(self, request, **kwargs):
-        category = super(CategoryThreadsList, self).get_category(request, **kwargs)
+        category = super(CategoryThreadsList, self).get_category(
+            request, **kwargs)
         if not category.level:
             raise Http404()  # disallow root category access
         return category
 
 
+@method_decorator(decorators, name='dispatch')
 class PrivateThreadsList(ThreadsList):
     category = PrivateThreadsCategory
     threads = PrivateThreads
