@@ -1,7 +1,9 @@
 from math import ceil
 
-from django.core.exceptions import PermissionDenied
+from django.contrib import messages
+from django.core.exceptions import PermissionDenied, ObjectDoesNotExist
 from django.db.models import Q
+from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.utils.translation import ugettext as _
 from django.views import View
@@ -19,9 +21,11 @@ class GotoView(View):
         thread = self.get_thread(request, pk, slug).unwrap()
         self.test_permissions(request, thread)
 
-        posts_queryset = exclude_invisible_posts(request.user, thread.category, thread.post_set)
+        posts_queryset = exclude_invisible_posts(
+            request.user, thread.category, thread.post_set)
 
-        target_post = self.get_target_post(request.user, thread, posts_queryset.order_by('id'), **kwargs)
+        target_post = self.get_target_post(
+            request.user, thread, posts_queryset.order_by('id'), **kwargs)
         target_page = self.compute_post_page(target_post, posts_queryset)
 
         return self.get_redirect(thread, target_post, target_page)
@@ -33,7 +37,8 @@ class GotoView(View):
         pass
 
     def get_target_post(self, user, thread, posts_queryset):
-        raise NotImplementedError("goto views should define their own get_target_post method")
+        raise NotImplementedError(
+            "goto views should define their own get_target_post method")
 
     def compute_post_page(self, target_post, posts_queryset):
         # filter out events, order queryset
@@ -64,15 +69,37 @@ class GotoView(View):
         return int(ceil(float(post_position) / (per_page)))
 
     def get_redirect(self, thread, target_post, target_page):
-        thread_url = thread.thread_type.get_thread_absolute_url(thread, target_page)
+        thread_url = thread.thread_type.get_thread_absolute_url(
+            thread, target_page)
         return redirect('%s#post-%s' % (thread_url, target_post.pk))
 
 
 class ThreadGotoPostView(GotoView):
     thread = ForumThread
 
-    def get_target_post(self, user, thread, posts_queryset, **kwargs):
-        return get_object_or_404(posts_queryset, pk=kwargs['post'])
+    def get(self, request, pk, slug, **kwargs):
+        thread = self.get_thread(request, pk, slug).unwrap()
+        self.test_permissions(request, thread)
+
+        posts_queryset = exclude_invisible_posts(
+            request.user, thread.category, thread.post_set)
+
+        target_post = self.get_target_post(
+            request, request.user, thread, posts_queryset.order_by('id'),
+            **kwargs)
+        if isinstance(target_post, HttpResponseRedirect):
+            return target_post
+        target_page = self.compute_post_page(target_post, posts_queryset)
+
+        return self.get_redirect(thread, target_post, target_page)
+
+    def get_target_post(self, request, user, thread, posts_queryset, **kwargs):
+        try:
+            return posts_queryset.get(pk=kwargs['post'])
+        except ObjectDoesNotExist:
+            messages.warning(request, _("This post is deleted."))
+        return redirect(thread.get_last_post_url())
+        # return get_object_or_404(posts_queryset, pk=kwargs['post'])
 
 
 class ThreadGotoLastView(GotoView):
