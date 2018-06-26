@@ -457,6 +457,10 @@ class User(AbstractBaseUser, PermissionsMixin):
         except User.DoesNotExist:
             return False
 
+    def save(self, *args, **kwargs):
+        self.set_email(self.email)
+        return super(User, self).save(*args, **kwargs)
+
 
 class Online(models.Model):
     user = models.OneToOneField(
