@@ -369,12 +369,8 @@ class User(AbstractBaseUser, PermissionsMixin):
         return is_user_signature_valid(self)
 
     def get_absolute_url(self):
-        return reverse(
-            'misago:user', kwargs={
-                'slug': self.slug,
-                'pk': self.pk,
-            }
-        )
+        """Since userprofile pages are disabled, redirect to forum home page"""
+        return reverse('misago:categories')
 
     def get_username(self):
         """dirty hack: return real username instead of normalized slug"""
