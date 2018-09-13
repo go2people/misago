@@ -24,8 +24,10 @@ def render(request, template, context=None, error_page=False):
     context = context or {}
 
     navigation = site.visible_branches(request)
-    sections = navigation[0]
-
+    try:
+        sections = navigation[0]
+    except IndexError:
+        sections = []
     try:
         actions = navigation[1]
     except IndexError:
