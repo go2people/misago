@@ -44,8 +44,9 @@ def render(request, template, context=None, error_page=False):
         # admittedly haxy solution for displaying navs on error pages
         context['actions'] = []
         context['pages'] = []
-        for item in navigation[0]:
-            item['is_active'] = False
+        if len(navigation):
+            for item in navigation[0]:
+                item['is_active'] = False
     else:
         context['active_link'] = None
         for item in navigation[-1]:
